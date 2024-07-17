@@ -11,15 +11,33 @@ services:
       - 5432:5432
     networks:
       - postgres-db-network
-  cloudbeaver:
-    image: dbeaver/cloudbeaver:latest
-    environment:
-      - CB_ADMIN_NAME=admin
-      - CB_ADMIN_PASSWORD=admin
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
     ports:
-      - 8978:8978
+      - "8888:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    depends_on:
+      - postgres
     networks:
       - postgres-db-network
+
+  cms-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8979:8979
+    depends_on:
+      - postgres
+    networks:
+      - postgres-db-network
+
 volumes:
   postgres-db-volume:
     driver: local
@@ -27,6 +45,8 @@ volumes:
       type: none
       o: bind
       device: ./data
+  pgadmin-data:
+
 networks:
   postgres-db-network:
     driver: bridge

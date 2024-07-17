@@ -2,7 +2,7 @@ use backend::app_state::AppState;
 use backend::run;
 use deadpool_diesel::postgres::{Manager, Pool};
 use dotenvy::dotenv;
-use std::env;
+use dotenvy_macro::dotenv;
 
 #[tokio::main]
 async fn main() {
@@ -10,7 +10,8 @@ async fn main() {
 
     dotenv().ok();
 
-    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+    let database_url = dotenv!("DATABASE_URL").to_owned();
+
     let manager = Manager::new(
         database_url,
         deadpool_diesel::Runtime::Tokio1,
