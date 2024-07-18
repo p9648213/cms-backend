@@ -10,7 +10,7 @@ async fn main() {
 
     dotenv().ok();
 
-    let database_url = dotenv!("DATABASE_URL").to_owned();
+    let database_url = dotenv!("DATABASE_URI").to_owned();
 
     let manager = Manager::new(
         database_url,

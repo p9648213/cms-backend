@@ -13,6 +13,9 @@ diesel::table! {
         address -> Nullable<Varchar>,
         #[max_length = 20]
         tax_code -> Nullable<Varchar>,
+        identifier_id -> Nullable<Int4>,
+        #[max_length = 255]
+        api_key -> Nullable<Varchar>,
         #[max_length = 500]
         invoice_address -> Nullable<Varchar>,
         #[max_length = 255]
