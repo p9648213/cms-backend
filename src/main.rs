@@ -17,7 +17,7 @@ async fn main() {
         deadpool_diesel::Runtime::Tokio1,
     );
     
-    let pool = Pool::builder(manager).build().expect("Error connecting to database");
+    let pool = Pool::builder(manager).build().expect("Error creating pool");
 
     let app_state = AppState {
         pool

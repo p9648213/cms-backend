@@ -14,7 +14,7 @@ pub async fn get_agencies(
   let result = db.interact(|conn| {
      agencies.select(Agency::as_select()).load(conn)
   }).await.map_err(|error| {
-    eprintln!("Error connecting to db {:?}", error);
+    eprintln!("Error connecting to database {:?}", error);
     AppError::new(StatusCode::INTERNAL_SERVER_ERROR, "There was an error, please try again later")
   })?.map_err(|error| {
     eprintln!("Error loading agencies {:?}", error);
