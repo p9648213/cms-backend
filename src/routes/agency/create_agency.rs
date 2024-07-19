@@ -1,10 +1,10 @@
 use axum::Json;
 use axum::{extract::State, http::StatusCode};
 use deadpool_diesel::postgres::Pool;
-use diesel::{RunQueryDsl, SelectableHelper};
-use crate::models::agencies::{Agency, NewAgency};
+use diesel::prelude::*;
+use crate::models::agency::{Agency, NewAgency};
 use crate::schema::agencies;
-use crate::utilities::{app_error::AppError, db_connection::get_connection};
+use crate::utilities::{app_error::AppError, db_connection::get_db_connection};
 
 use super::RequestAgency;
 
@@ -12,7 +12,7 @@ pub async fn create_agency(
   State(pool): State<Pool>,
   Json(request_agency): Json<RequestAgency>
 ) -> Result<Json<Agency>, AppError> {
-  let db = get_connection(pool).await?;
+  let db = get_db_connection(pool).await?;
 
   let new_agency = NewAgency {
     name: request_agency.name,

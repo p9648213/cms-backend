@@ -1,20 +1,35 @@
-use axum::{response::Html, routing::{get, post}, Router};
+use axum::{
+    routing::{get, post},
+    Router,
+};
 
 use crate::{
     app_state::AppState,
-    routes::{agency::{create_agency::create_agency, get_agencies::get_agencies}, check_health::ping::ping},
+    routes::{
+        agency::{create_agency::create_agency, get_agencies::get_agencies},
+        check_health::ping::ping,
+        website::{
+            create_website::create_website,
+            get_websites::{get_websites, get_websites_by_agency_id},
+        },
+    },
 };
 
 pub fn create_router(app_state: AppState) -> Router {
-    Router::new()
-        .route("/", get(hello_world))
-        .route("/ping", get(ping))
-        .route("/agencies", get(get_agencies))
-        .route("/agencies", post(create_agency))
-        .with_state(app_state)
-}
+    let check_health_route = Router::new().route("/ping", get(ping));
 
-async fn hello_world() -> Html<&'static str> {
-    println!("Request received\nSending response.");
-    Html("<h1>Hello World!</h1>")
+    let agency_route = Router::new()
+        .route("/agencies", get(get_agencies))
+        .route("/agencies", post(create_agency));
+
+    let website_routes = Router::new()
+        .route("/websites", get(get_websites))
+        .route("/websites", post(create_website))
+        .route("/websites/agency/:id", get(get_websites_by_agency_id));
+
+    Router::new()
+        .merge(check_health_route)
+        .merge(agency_route)
+        .merge(website_routes)
+        .with_state(app_state)
 }

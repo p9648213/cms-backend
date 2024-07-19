@@ -1,18 +1,18 @@
 use axum::response::Json;
 use axum::{extract::State, http::StatusCode};
 use deadpool_diesel::postgres::Pool;
-use crate::utilities::db_connection::get_connection;
-use crate::{models::agencies::Agency, utilities::app_error::AppError};
-use crate::schema::agencies::dsl::*;
+use crate::utilities::db_connection::get_db_connection;
+use crate::{models::agency::Agency, utilities::app_error::AppError};
+use crate::schema::agencies::dsl;
 use diesel::prelude::*;
 
 pub async fn get_agencies(
   State(pool): State<Pool>
 ) -> Result<Json<Vec<Agency>>, AppError> {
-  let db = get_connection(pool).await?;
+  let db = get_db_connection(pool).await?;
 
   let response_agencies = db.interact(|conn| {
-     agencies.select(Agency::as_select()).load(conn)
+     dsl::agencies.select(Agency::as_select()).load(conn)
   }).await.map_err(|error| {
     eprintln!("Error connecting to database {:?}", error);
     AppError::new(StatusCode::INTERNAL_SERVER_ERROR, "There was an error, please try again later")
